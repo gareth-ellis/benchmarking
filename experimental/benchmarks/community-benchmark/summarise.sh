@@ -75,9 +75,13 @@ echo "Output will be saved to $fileName"
 pwd
 ./node benchmark/run.js $FILTER $RUNS --format csv -- $CATEGORY | tee $fileName
 cat $fileName | awk -f summariseCSV.awk
+benchmarkscripttime=`cat $fileName | awk -f summariseCSV.awk|awk '{print $4}'`
+
 mv $fileName $startDir
 scriptend=`date +%s`
 let buildTime=postBuild-startTime
 let postbuildTime=scriptend-postBuild
 echo "Build took $buildTime seconds"
 echo "Benchmark took $postbuildTime seconds"
+timestamp=`date`
+echo "timestamp=$timestamp,category=$CATEGORY,build=$buildTime,benchmark=$postbuildTime,benchmarkscript=$benchmarkscripttime" >> $startDir/summary.txt
