@@ -25,6 +25,7 @@ echo "CATEGORY = a category of tests to run - folders in benchmark. Defaults to 
 echo "BRANCH = the branch the benchmarks to be timed are in. Defaults to master"
 echo "RUNS = defaults to 1"
 echo "FILTER = defaults to empty"
+echo "CHECKOUTFRESHNODE = defaults to true. Set to false to attempt to reuse local checkout"
 
 }
 startTime=`date +%s`
@@ -32,11 +33,15 @@ getMACHINE_THREADS=`cat /proc/cpuinfo |grep processor|tail -n1|awk {'print $3'}`
 let getMACHINE_THREADS=getMACHINE_THREADS+1 #getting threads this way is 0 based. Add one
 optional MACHINE_THREADS $getMACHINE_THREADS
 optional CATEGORY 
-optional RUNS  1
+optional RUNS 1
 optional FILTER
 optional BRANCH master
+optional CHECKOUTFRESHNODE true
 pushd $startDir
-#rm -rf node
+if [ "$CHECKOUTFRESHNODE" = "true" ]; then 
+	echo "Removing old node checkout"
+	rm -rf node
+fi
 if [ ! -d node ]; then
 	git clone http://github.com/nodejs/node.git
 fi
